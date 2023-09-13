@@ -1,10 +1,10 @@
 .PHONY: install local lint lint-fix cfn-lint flake8 black black-fix isort isort-fix bandit safety test test-v build
 
-GITLAB_TOKEN :=$(if $(CI_JOB_TOKEN),$(CI_JOB_TOKEN),$(NPM_TOKEN))
+# GITLAB_TOKEN :=$(if $(CI_JOB_TOKEN),$(CI_JOB_TOKEN),$(NPM_TOKEN))
 
 .ONESHELL:
 
-install: poetry-config
+install:
 	poetry install
 
 update:
@@ -72,7 +72,7 @@ test-v:
 test: utest
 
 .DELETE_ON_ERROR:
-requirements.txt: poetry-config
+requirements.txt:
 	poetry export --without-hashes --with-credentials -f requirements.txt -o requirements.txt
 	SAM_CLI_TELEMETRY=0 \
 		sam build -m requirements.txt -t template.yaml --debug --use-container
