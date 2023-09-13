@@ -1,0 +1,17 @@
+*.pyc
+__pycache__
+*.egg-info/
+.aws-sam/
+.env*
+!.env*.example
+.coverage
+reports
+requirements.txt
+.venv
+
+# IDE
+.history
+.vscode
+.DS_Store
+.idea/
+
