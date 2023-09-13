@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+    A service which plays random music.
+
+Transform:
+  - AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Timeout: 300
+    MemorySize: 512
+    Runtime: python3.8
+    CodeUri: ./tune_tidbackend
+
+Resources:
+  GetRandomTrackFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: application.get_random_track.handler
+      Policies:
+        - SQSSendMessagePolicy:
+            QueueName: !GetAtt PlayRandomTrackQueue.QueueName
+      Environment:
+        Variables:
+          SOURCE_NAME: GetRandomTrackFunction
+          QUEUE_URL: !Ref "PlayRandomTrackQueue"
+    
+  PlayRandomTrackQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 300
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt PlayRandomTrackQueueDLQ.Arn
+
+  PlayRandomTrackQueueDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+
+  PlayRandomTrackFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: application.play_random_track.handler
+      Events:
+        PlayRandomTrackQueue:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt PlayRandomTrackQueueDLQ.Arn
+            BatchSize: 1
+      Environment:
+        Variables:
+          SOURCE_NAME: PlayRandomTrackFunction

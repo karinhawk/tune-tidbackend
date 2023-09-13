@@ -5,7 +5,7 @@
 #  '^.*some-file-name.txt$'
 #  '^some-folder/.*$'
 #)
-declare -a IGNORE_PATHS=()
+declare -a IGNORE_PATHS=("reports/*")
 
 echo_error() {
   RED="\033[31m\033[1m"

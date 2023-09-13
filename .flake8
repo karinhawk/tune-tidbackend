@@ -1,0 +1,12 @@
+[flake8]
+application_import_names =
+    tune_tidbackend
+    application
+    domain
+    infrastructure
+ignore = E203,W503
+exclude = .git,.aws-sam,.history,.venv
+statistics = True
+count = True
+per-file-ignores =
+    tests/*:D

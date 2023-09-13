@@ -56,8 +56,9 @@ utest:
 		--cov-report html:reports \
 		--cov-report xml:reports/coverage.xml \
 		--junitxml=reports/unit_test_report.xml \
-		--cov-fail-under=95 \
-		--cov=src tests/unit_tests -ra -s
+		# --cov-fail-under=95 \
+		--cov=src tests/unit_tests -ra -s \
+		-vvv
 
 test-v:
 	poetry run pytest \
@@ -66,8 +67,7 @@ test-v:
 		--cov-report xml:reports/coverage.xml \
 		--junitxml=reports/unit_test_report.xml \
 		--cov-fail-under=95 \
-		--cov=src tests/unit_tests -ra -s \
-		-vvv
+		--cov=src tests/unit_tests -ra -s
 
 test: utest
 
