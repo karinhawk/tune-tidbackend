@@ -1,0 +1,27 @@
+target-version = "py38"
+
+exclude = [
+    ".git",
+    ".aws-sam",
+    ".history",
+    ".venv"
+]
+ignore = ["B904"]
+select = [
+    "B",
+    "D",
+    "E",
+    "F",
+    "T2",
+    "W",
+]
+unfixable = []
+
+[pydocstyle]
+convention = "pep257"
+
+[per-file-ignores]
+"tests/*" = ["D"]
+"migrations/*" = ["D"]
+"scripts/flags/*" = ["D", "T201"]
+"scripts/rds/*" = ["T201"]

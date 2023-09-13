@@ -1,0 +1,52 @@
+repos:
+-   repo: local
+    hooks:
+    -   id: flake8
+        name: flake8
+        entry: make flake8
+        language: system
+        types_or: [python, flake8]
+    -   id: ruff
+        name: ruff
+        entry: make ruff
+        language: system
+        files: (^\.ruff\.toml|\.py)$
+        exclude: ^.aws-sam/
+    -   id: black
+        name: black
+        entry: make black
+        language: system
+        files: (^pyproject\.toml|\.py)$
+        exclude: ^.aws-sam/
+    -   id: isort
+        name: isort
+        entry: make isort
+        language: system
+        files: (^pyproject\.toml|\.py)$
+        exclude: ^.aws-sam/
+    -   id: cfn-lint
+        name: cloudformation lint
+        entry: make cfn-lint
+        language: system
+        files: ^template.yaml$
+    -   id: newline-check
+        name: check files have final newlines
+        entry: make newline-check
+        language: system
+    -   id: safety
+        name: safety
+        entry: make safety
+        language: system
+        files: poetry.lock
+    -   id: test
+        name: test
+        entry: make test
+        language: system
+        files: (^pytest\.ini|^\.coveragerc|\.py)$
+        exclude: ^.aws-sam/
+    -   id: bandit
+        name: bandit
+        entry: make bandit
+        language: system
+        files: (^\.bandit|^src\/.+\.py)$
+        exclude: ^.aws-sam/
