@@ -1,0 +1,83 @@
+default:
+  image: public.ecr.aws/sam/build-python3.9:latest-x86_64
+
+.python_job:
+  before_script:
+    - poetry config --local virtualenvs.in-project true
+    - poetry run python --version
+  cache:
+    key: ${CI_COMMIT_BRANCH}
+    paths:
+      - .cache/pip
+      - .venv/
+    policy: pull
+
+.branch_cfn_job:
+  tags:
+    - branch
+    - cloudformation
+  only:
+    - branches
+  except:
+    - main
+
+.main_cfn_job:
+  tags:
+    - master
+    - cloudformation
+  only:
+    - main
+
+variables:
+  <<: *base_variables
+
+stages:
+  - install
+  - test
+  - deploy
+  - stop branch stack
+
+cache:
+    key: ${CI_COMMIT_BRANCH}
+    paths:
+      - .cache/pip
+      - .venv/
+
+install:
+  stage: install
+  extends: .python_job
+  script:
+    make install
+  only:
+    - branches
+
+build:
+  stage: build
+  extends: .python_job
+  services:
+    - docker:dind
+  script:
+    make build
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_HOST: tcp://docker:2375/
+  artifacts:
+    when: on_success
+    expire_in: 1 day
+    paths:
+      - .aws-sam/
+
+deploy branch:
+  stage: deploy dev
+  script:
+    sam package --config-env dev --force-upload
+    sam deploy --config-env dev
+  only:
+    - branches
+
+deploy prod:
+  stage: deploy prod
+  extends: .main_cfn_job
+  script:
+    sam package --config-env prod --force-upload
+    sam deploy --config-env prod
